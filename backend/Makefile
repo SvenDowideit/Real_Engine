@@ -1,29 +1,15 @@
-.PHONY: default develop install build test clean
-
-default: develop
-
-run:
-	python run.py
-
-develop:
-	pip install -e .
-	# python setup.py develop
-
-install:
-	pip install .
-	# python setup.py install
+.PHONY: clean build run exec
 
 build:
-	python setup.py build
-
-test:
-	python setup.py test
-
-venv:
-	python -m venv venv
+	docker build -t realengine/backend:build .
 
 clean:
-	python setup.py clean
-	rm -rf venv/ build/ dist/ *.egg-info
-	find . -type f -name "*.pyc" -delete
-	find . -type d -name "__pycache__" -delete
+	docker rmi realengine/backend:build | true
+
+run:
+	docker run --name re-backend -p 8080:8080 --rm realengine/backend:build
+
+exec:
+	docker exec -it re-backend bash
+
+
